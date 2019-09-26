@@ -18,7 +18,7 @@ class Signin extends React.Component{
 	}
 
 	onsSubmitSi = () => {
-		fetch('http://localhost:3000/signin', {
+		fetch('https://safe-scrubland-73601.herokuapp.com/signin', {
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
@@ -33,10 +33,10 @@ class Signin extends React.Component{
 				this.props.loadUser(user);
 				this.setState({errorMess: ''});
 			}else{
-				console.log('Ye nah')
+				this.setState({errorMess: 'Please enter a valid e-mail and password'});
 			}
 		}).catch((err) => {
-			this.setState({errorMess: 'Please enter a valid username and password'});
+			this.setState({errorMess: 'Error connecting to server'});
 		})
 	}
 	

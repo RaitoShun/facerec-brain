@@ -80,7 +80,7 @@ onInputChange = (event) => {
 onButtSubmit = () => {
   if (this.state.input !== ''){
     this.setState({imageURL: this.state.input});
-     fetch('http://localhost:3000/imageURL', {
+     fetch('https://safe-scrubland-73601.herokuapp.com/imageURL', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -90,7 +90,7 @@ onButtSubmit = () => {
     .then(response => response.json())
     .then(response =>{ 
       if (response) {
-      fetch('http://localhost:3000/image', {
+      fetch('https://safe-scrubland-73601.herokuapp.com/image', {
         method: 'put',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
