@@ -43,7 +43,7 @@ class Signin extends React.Component{
   render(){
   const	{ onRouteChange } = this.props;
   	return(
-	  <Tilt className=" br3 shadow-5 center" options={{ max : 6, transition: false }} style={{ height: 500, width: 500 }} >
+	  <Tilt className=" br3 shadow-5 center w-40-ns w-100" options={{ max : 6, transition: false }}>
 		<main className="pa4 black-80">
 		  <div className="measure">
 		    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">

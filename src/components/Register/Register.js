@@ -37,7 +37,9 @@ class Register extends React.Component{
 				this.props.loadUser(user)
 				this.props.onRouteChange('home');
 			}else{
-			 this.setState({errorMess: 'Please enter a valid name, e-mail, and password'});
+				user === "incorrect form submission" ? 
+					this.setState({ errorMess: 'Please enter a valid name, e-mail, and password' })
+				:	this.setState({errorMess: 'Email has already been claimed'})
 			}
 		}).catch((err) => {
 			this.setState({errorMess: 'Error connecting to server'});
@@ -48,7 +50,7 @@ class Register extends React.Component{
 
 	render(){
 		return(
-	  <Tilt className=" br3 shadow-5 center" options={{ max : 6, transition: false }} style={{ height: 500, width: 500 }} >
+	  <Tilt className=" br3 shadow-5 center w-40-ns w-100" options={{ max : 6, transition: false }} >
 		<main className="pa4 black-80">
 		  <div className="measure ">
 		    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
