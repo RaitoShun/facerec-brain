@@ -129,10 +129,14 @@ onRouteChange = (route) => {
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         { route === 'home' 
         ?<div>
-          <Logo />
+          {
+          this.state.imageURL ?
+              <FaceRec boks={box} imageURL={imageURL} />
+              :
+              <Logo />
+          }
           <Rank name={this.state.user.name} entries={this.state.user.entries} />
           <ImageLinkform onInputChange={this.onInputChange} onButtSubmit={this.onButtSubmit}  />
-          <FaceRec boks={box}imageURL={imageURL} />
          </div>
 
 
