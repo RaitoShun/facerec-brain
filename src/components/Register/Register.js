@@ -1,4 +1,5 @@
 import React from 'react';
+import Loader from "../Loader/Loader";
 class Register extends React.Component{
   constructor(props){
 		super(props);
@@ -6,7 +7,8 @@ class Register extends React.Component{
 			email: '',
 			pass: '',
 			name: '',
-			errorMess: ''
+			errorMess: '',
+			loading: false
 		}
 	}
 
@@ -19,7 +21,13 @@ class Register extends React.Component{
 		onPassChange = (event) =>{
 		this.setState({pass: event.target.value})
 	}
+	handleKeyPress = (event) => {
+		if (event.key === 'Enter') {
+			this.onSubmitRe();
+		}
+	}
 	onSubmitRe = () => {
+		this.setState({ loading: true });
 		fetch('https://safe-scrubland-73601.herokuapp.com/register', {
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
@@ -31,6 +39,7 @@ class Register extends React.Component{
 		})
 		.then(response => response.json())
 		.then(user => {
+			this.setState({ loading: false });
 			if (user.id) {
 				this.props.loadUser(user)
 				this.props.onRouteChange('home');
@@ -48,7 +57,7 @@ class Register extends React.Component{
 
 	render(){
 		return(
-	  <div className=" br3 shadow-5 center w-40-ns w-100" >
+	<div className=" br3 shadow-5 center w-40-ns w-100" onKeyPress={this.handleKeyPress} >
 		<main className="pa4 black-80">
 		  <div className="measure ">
 		    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
@@ -81,7 +90,8 @@ class Register extends React.Component{
 		        onChange={this.onPassChange}/>
 		      </div>
 		    </fieldset>
-		    <div className="">
+		    <div>
+			<Loader loading={this.state.loading}></Loader>
 		    <p className="errorMess" style={{color: 'red'}}>{this.state.errorMess}</p>
 		      <input 
 		      className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 

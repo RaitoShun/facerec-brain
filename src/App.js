@@ -5,6 +5,7 @@ import ImageLinkform from './components/ImgForm/ImgForm';
 import Rank from './components/Rank/Rank';
 import FaceRec from './components/FaceRec/FaceRec';
 import Signin from './components/Signin/Signin';
+import Loader from './components/Loader/Loader';
 import Particles from 'react-particles-js';
 import Register from './components/Register/Register';
 import './App.css';
@@ -28,6 +29,7 @@ particles: {
       box: {},
       route:'signin',
       isSignedIn: false,
+      loading: false,
       user: {
         id: '',
         email:'',
@@ -78,35 +80,40 @@ onInputChange = (event) => {
 }
 
 onButtSubmit = () => {
-  if (this.state.input !== ''){
-    this.setState({imageURL: this.state.input});
-     fetch('https://safe-scrubland-73601.herokuapp.com/imageURL', {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          input: this.state.input
+  if (this.state.input.includes('http://') || this.state.input.includes('https://')){
+    this.displayBox('');
+      this.setState({ loading: true });
+      this.setState({ imageURL: this.state.input })
+      fetch('https://safe-scrubland-73601.herokuapp.com/imageURL', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            input: this.state.input
+          })
         })
+      .then(response => response.json())
+      .then(response =>{ 
+        if (response) {
+        fetch('https://safe-scrubland-73601.herokuapp.com/image', {
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            id: this.state.user.id
+          })
+        })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, { entries: count }))
+          })
+          .catch(console.log)
+      }
+        this.displayBox(this.calcFaceLoc(response))
+        this.setState({ loading: false });
       })
-    .then(response => response.json())
-    .then(response =>{ 
-      if (response) {
-      fetch('https://safe-scrubland-73601.herokuapp.com/image', {
-        method: 'put',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          id: this.state.user.id
+      .catch(err =>{
+          this.setState({ loading: false }); 
+          console.log(err);
         })
-      })
-        .then(response => response.json())
-        .then(count => {
-          this.setState(Object.assign(this.state.user, { entries: count }))
-        })
-        .catch(console.log)
-    }
-      this.displayBox(this.calcFaceLoc(response))
-
-    })
-    .catch(err => console.log(err));
   }else{
     window.alert('Please enter a valid URL')
   }
@@ -129,14 +136,15 @@ onRouteChange = (route) => {
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         { route === 'home' 
         ?<div>
-          <div class="ma5 mt0" style={{height: 250}}>
           {
           this.state.imageURL ?
+            <div className="ma ma5 mt0 center" style={{ height: 250, width: 250 }}>
               <FaceRec boks={box} imageURL={imageURL} />
+            </div>
               :
               <Logo />
           }
-          </div>
+            <Loader loading={this.state.loading}></Loader>
           <Rank name={this.state.user.name} entries={this.state.user.entries} />
           <ImageLinkform onInputChange={this.onInputChange} onButtSubmit={this.onButtSubmit}  />
          </div>

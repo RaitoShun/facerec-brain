@@ -1,5 +1,5 @@
 import React from 'react';
-import Tilt from 'react-tilt';
+import Loader from "../Loader/Loader";
 
 class Signin extends React.Component{
 	constructor(props){
@@ -7,7 +7,8 @@ class Signin extends React.Component{
 		this.state = {
 			signInEmail: '',
 			signInPass: '',
-			errorMess: ''
+			errorMess: '',
+			loading: false
 		}
 	}
 	onEmailChange = (event) =>  {
@@ -16,8 +17,14 @@ class Signin extends React.Component{
 		onPassChange = (event) => {
 		this.setState({signInPass: event.target.value})
 	}
+	handleKeyPress = (event) => {
+		if (event.key === 'Enter') {
+			this.onsSubmitSi();
+		}
+	}
 
 	onsSubmitSi = () => {
+		this.setState({ loading: true });
 		fetch('https://safe-scrubland-73601.herokuapp.com/signin', {
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
@@ -28,6 +35,7 @@ class Signin extends React.Component{
 		})
 		.then(response => response.json())
 		.then(user => {
+			this.setState({ loading: false });
 			if (user.id) {
 				this.props.onRouteChange('home');
 				this.props.loadUser(user);
@@ -43,25 +51,26 @@ class Signin extends React.Component{
   render(){
   const	{ onRouteChange } = this.props;
   	return(
-	  <div className=" br3 shadow-5 center w-40-ns w-100">
+	<div className=" br3 shadow-5 center w-40-ns w-100" onKeyPress={this.handleKeyPress}>
 		<main className="pa4 black-80">
-		  <div className="measure">
-		    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-		      <legend className="f1 fw6 ph0 mh0 center ">Sign In</legend>
-		      <div className="mt3">
-		        <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-		        <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address"  id="email-address"
-		        onChange={this.onEmailChange} />
-		      </div>
-		      <div className="mv3">
-		        <label className="db fw6 lh-copy f6" htmlFor="password" >Password</label>
-		        <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" onChange={this.onPassChange} type="password" name="password"  id="password" />
-		      </div>
-		    </fieldset>
-		    <p className="errorMess" style={{color: 'red'}}>{this.state.errorMess}</p>
-		    <div className="">
-		      <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" onClick={this.onsSubmitSi}type="submit" value="Sign in" />
-		    </div>
+			<div className="measure">
+				<fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+				<legend className="f1 fw6 ph0 mh0 center ">Sign In</legend>
+				<div className="mt3">
+					<label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
+					<input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address"  id="email-address"
+					onChange={this.onEmailChange} />
+				</div>
+				<div className="mv3">
+					<label className="db fw6 lh-copy f6" htmlFor="password" >Password</label>
+					<input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" onChange={this.onPassChange} type="password" name="password"  id="password" />
+				</div>
+				</fieldset>
+				<Loader loading={this.state.loading}></Loader>
+		    	<p className="errorMess" style={{color: 'red'}}>{this.state.errorMess}</p>
+		    	<div className="">
+		      	<input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" onClick={this.onsSubmitSi}type="submit" value="Sign in" />
+		    	</div>
 		    <div className="lh-copy mt3">
 		      <p onClick={() => onRouteChange('register')} className="f6 link dim black db pointer">Register</p>
 		    </div>
